@@ -6,6 +6,7 @@
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
@@ -45,6 +46,25 @@ Route::post('/login', function (Request $request) {
   ];
 });
 
+Route::middleware('auth:sanctum')->post('/logout', function (Request $request) {
+  $request->user()->currentAccessToken()->delete();
+
+  return response()->json(['message' => 'Déconnexion réussie']);
+});
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
   return $request->user();
+});
+
+Route::middleware('auth:sanctum')->delete('/delete', function (Request $request) {
+  $user = $request->user();
+
+  if (! $user) {
+    throw ValidationException::withMessages([
+      'email' => ['Les informations sont invalides.'],
+    ]);
+  }
+  $user->delete();
+
+  return response()->json(['message' => 'Suppression réussie']);
 });
