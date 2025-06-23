@@ -14,7 +14,9 @@ Route::middleware('auth:sanctum')->post('/logout', [UserController::class, "logo
 Route::middleware('auth:sanctum')->get('/user', [UserController::class, "user"]);
 Route::middleware('auth:sanctum')->delete('/user', [UserController::class, "delete"]);
 
-Route::post('/souvenir-create', [SouvenirController::class, "store"]);
-Route::get('/souvenir', [SouvenirController::class, "show"]);
-Route::put('/souvenir-update', [SouvenirController::class, "update"]);
-Route::delete('/souvenir-delete', [SouvenirController::class, "delete"]);
+Route::middleware('auth:sanctum')->group(function () {
+  Route::post('/souvenir-create', [SouvenirController::class, "store"]);
+  Route::get('/souvenir', [SouvenirController::class, "show"]);
+  Route::put('/souvenir-update', [SouvenirController::class, "update"]);
+  Route::delete('/souvenir-delete', [SouvenirController::class, "delete"]);
+});

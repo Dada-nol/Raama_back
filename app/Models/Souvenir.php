@@ -16,4 +16,11 @@ class Souvenir extends Model
         'cover_image',
         'is_closed'
     ];
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'souvenir_users')
+            ->withPivot('role', 'joined_at')
+            ->withTimestamps();
+    }
 }

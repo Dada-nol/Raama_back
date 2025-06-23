@@ -46,4 +46,11 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function souvenirs()
+    {
+        return $this->belongsToMany(Souvenir::class, 'souvenir_users')
+            ->withPivot('role', 'joined_at')
+            ->withTimestamps();
+    }
 }

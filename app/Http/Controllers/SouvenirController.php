@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Souvenir;
-use App\Models\SouvenirUser;
 use Illuminate\Http\Request;
 
 class SouvenirController extends Controller
@@ -21,6 +20,7 @@ class SouvenirController extends Controller
      */
     public function store(Request $request)
     {
+        $user = $request->user();
         $request->validate([
             'name' => 'required',
             'description',
@@ -34,11 +34,12 @@ class SouvenirController extends Controller
             'is_closed' => false
         ]);
 
-        SouvenirUser::create([
-            'souvenir_id' => '1',
-            'user_id' => '1',
+        $souvenir->users()->attach($user->id, [
             'role' => 'admin',
+            'joined_at' => now(),
         ]);
+
+
 
         return response()->json($souvenir, 201);
     }
