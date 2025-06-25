@@ -15,8 +15,12 @@ Route::middleware('auth:sanctum')->get('/user', [UserController::class, "user"])
 Route::middleware('auth:sanctum')->delete('/user', [UserController::class, "delete"]);
 
 Route::middleware('auth:sanctum')->group(function () {
-  Route::post('/souvenir-create', [SouvenirController::class, "store"]);
-  Route::get('/souvenir', [SouvenirController::class, "show"]);
-  Route::put('/souvenir-update', [SouvenirController::class, "update"]);
-  Route::delete('/souvenir-delete', [SouvenirController::class, "delete"]);
+  Route::post('/souvenir', [SouvenirController::class, 'store']);
+  Route::get('/souvenirs', [SouvenirController::class, 'index']);
+  Route::get('/souvenir/{id}', [SouvenirController::class, 'show']);
+  Route::put('/souvenir/{id}', [SouvenirController::class, 'update']);
+  Route::delete('/souvenir/{id}', [SouvenirController::class, 'delete']);
 });
+
+// Alternative
+// Route::middleware('auth:sanctum')->apiResource('souvenir', SouvenirController::class);
