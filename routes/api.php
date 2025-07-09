@@ -19,7 +19,7 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('/souvenirs', [SouvenirController::class, 'index']);
   Route::get('/souvenir/{id}', [SouvenirController::class, 'show']);
   Route::put('/souvenir/{id}', [SouvenirController::class, 'update']);
-  Route::delete('/souvenir/{id}', [SouvenirController::class, 'delete']);
+  Route::delete('/souvenir/{souvenir}', [SouvenirController::class, 'delete']);
 });
 
 // Alternative

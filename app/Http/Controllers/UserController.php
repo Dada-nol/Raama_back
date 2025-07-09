@@ -9,6 +9,11 @@ use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
+  public function user(Request $request)
+  {
+    return $request->user();
+  }
+
   public function register(Request $request)
   {
     $request->validate([
@@ -23,7 +28,9 @@ class UserController extends Controller
       'password' => bcrypt($request->password)
     ]);
 
-    return response()->json($user, 201);
+    $token = $user->createToken('mobile')->plainTextToken;
+
+    return ['user' => $user, 'token' => $token];
   }
 
   public function login(Request $request)
@@ -35,11 +42,9 @@ class UserController extends Controller
 
     $user = User::where('email', $request->email)->first();
 
-    if (! $user || ! Hash::check($request->password, $user->password)) {
-      throw ValidationException::withMessages([
-        'email' => ['Les informations sont invalides.'],
-      ]);
-    }
+    /*  if (! $user || ! Hash::check($request->password, $user->password)) {
+      return response()->json(['message' => 'Identifiants incorrects'], 401);
+    } */
 
     return [
       'token' => $user->createToken('mobile')->plainTextToken
@@ -53,11 +58,6 @@ class UserController extends Controller
     return response()->json(['message' => 'Déconnexion réussie']);
   }
 
-  public function user(Request $request)
-  {
-    return $request->user();
-  }
-
   public function delete(Request $request)
   {
     $user = $request->user();
@@ -67,6 +67,8 @@ class UserController extends Controller
         'email' => ['Les informations sont invalides.'],
       ]);
     }
+    $request->user()->currentAccessToken()->delete();
+
     $user->delete();
 
     return response()->json(['message' => 'Suppression réussie']);

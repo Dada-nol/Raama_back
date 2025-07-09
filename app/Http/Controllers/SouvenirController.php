@@ -76,21 +76,17 @@ class SouvenirController extends Controller
             return response()->json(['message' => 'Souvenir introuvable'], 404);
         }
 
-        $request->validate([
-            'name',
-            'description',
-            'cover_image',
-            'is_closed'
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'description' => 'sometimes|nullable|string',
+            'cover_image' => 'sometimes|nullable|string',
+            'is_closed' => 'sometimes|boolean',
+            'users' => 'sometimes|array', // si tu modifies les rôles
         ]);
 
-        $souvenir->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'cover_image' => $request->cover_image,
-            'is_closed' => $request->is_closed
-        ]);
+        $souvenir->update($validated);
 
-        return response()->json($souvenir, 201);
+        return response()->json($souvenir, 200);
     }
 
     /**
