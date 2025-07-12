@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Entry extends Model
 {
@@ -18,12 +19,19 @@ class Entry extends Model
         'caption',
     ];
 
-    public function user()
+
+    /**
+     * @return BelongsTo<User, Entry>
+     */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function souvenir()
+    /**
+     * @return BelongsTo<Souvenir, Entry>
+     */
+    public function souvenir(): BelongsTo
     {
         return $this->belongsTo(Souvenir::class);
     }

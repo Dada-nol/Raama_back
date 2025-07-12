@@ -37,7 +37,8 @@ class EntryResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('user.name')->searchable(),
+                Tables\Columns\TextColumn::make('souvenir.name'),
             ])
             ->filters([
                 //

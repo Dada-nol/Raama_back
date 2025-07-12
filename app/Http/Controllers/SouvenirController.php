@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Souvenir;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class SouvenirController extends Controller
@@ -10,7 +11,7 @@ class SouvenirController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         $user = $request->user();
         $souvenirs = $user->souvenirs()->with('users')->get();
@@ -25,7 +26,7 @@ class SouvenirController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $user = $request->user();
         $request->validate([
@@ -52,7 +53,7 @@ class SouvenirController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id, Request $request)
+    public function show(int $id, Request $request): JsonResponse
     {
         $user = $request->user();
         $souvenir = $user->souvenirs()->with('users')->find($id);
@@ -67,7 +68,7 @@ class SouvenirController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id): JsonResponse
     {
         $user = $request->user();
         $souvenir = $user->souvenirs()->with('users')->find($id);
@@ -92,7 +93,7 @@ class SouvenirController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function delete(Souvenir $souvenir)
+    public function delete(Souvenir $souvenir): JsonResponse
     {
         $souvenir->delete();
 
