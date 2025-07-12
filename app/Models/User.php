@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -20,6 +22,8 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'firstname',
+        'pseudo',
         'email',
         'password',
     ];
@@ -47,10 +51,21 @@ class User extends Authenticatable
         ];
     }
 
-    public function souvenirs()
+    /**
+     * @return BelongsToMany<Souvenir, User>
+     */
+    public function souvenirs(): BelongsToMany
     {
         return $this->belongsToMany(Souvenir::class, 'souvenir_users')
             ->withPivot('role', 'joined_at')
             ->withTimestamps();
+    }
+
+    /**
+     * @return HasMany<Entry, User>
+     */
+    public function entries(): HasMany
+    {
+        return $this->hasMany(Entry::class);
     }
 }
