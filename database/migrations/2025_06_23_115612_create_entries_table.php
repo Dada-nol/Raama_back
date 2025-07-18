@@ -19,6 +19,14 @@ return new class extends Migration
             $table->string('caption')->nullable();
             $table->timestamps();
         });
+
+        Schema::create('user_streaks', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->integer('current_streak')->default(0);
+            $table->integer('longest_streak')->nullable();
+            $table->date('last_contribution_date')->nullable();
+        });
     }
 
     /**
@@ -27,5 +35,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('entries');
+        Schema::dropIfExists('user_streaks');
     }
 };

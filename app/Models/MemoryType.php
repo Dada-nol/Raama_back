@@ -14,6 +14,5 @@ class MemoryType extends Model
     protected $fillable = [
         'title',
         'description',
-        'cover_image',
     ];
 }
