@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SouvenirUser extends Model
 {
@@ -14,7 +15,24 @@ class SouvenirUser extends Model
     protected $fillable = [
         'souvenir_id',
         'user_id',
+        'pseudo',
         'role',
         'joined_at'
     ];
+
+    /**
+     * @return BelongsTo<User, SouvenirUser>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return BelongsTo<Souvenir, SouvenirUser>
+     */
+    public function souvenir(): BelongsTo
+    {
+        return $this->belongsTo(Souvenir::class);
+    }
 }

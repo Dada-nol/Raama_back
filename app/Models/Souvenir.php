@@ -13,10 +13,11 @@ class Souvenir extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'title',
         'description',
         'cover_image',
-        'is_closed'
+        'memory_points',
+        'memory_type_id',
     ];
 
     /**
