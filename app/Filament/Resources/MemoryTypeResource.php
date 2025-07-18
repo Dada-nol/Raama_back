@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
-use App\Models\User;
+use App\Filament\Resources\MemoryTypeResource\Pages;
+use App\Filament\Resources\MemoryTypeResource\RelationManagers;
+use App\Models\MemoryType;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,9 +13,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class UserResource extends Resource
+class MemoryTypeResource extends Resource
 {
-    protected static ?string $model = User::class;
+    protected static ?string $model = MemoryType::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -23,18 +23,10 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')->required()
+                Forms\Components\TextInput::make('title')->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('firstname')->required()
+                Forms\Components\TextInput::make('description')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('email')->required()
-                    ->email()->unique(),
-                Forms\Components\TextInput::make('password')->required()
-                    ->password(),
-                Forms\Components\Select::make('role')->options(['user' => 'User', 'admin' => 'Admin']),
-                Forms\Components\TextInput::make('personal_points')->numeric()
-
-
             ]);
     }
 
@@ -43,9 +35,8 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('firstname')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('personal_points')->sortable(),
-                Tables\Columns\TextColumn::make('email')->searchable(),
+                Tables\Columns\TextColumn::make('description')->sortable(),
+
             ])
             ->filters([
                 //
@@ -63,16 +54,16 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\SouvenirsRelationManager::class,
+            //
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'index' => Pages\ListMemoryTypes::route('/'),
+            'create' => Pages\CreateMemoryType::route('/create'),
+            'edit' => Pages\EditMemoryType::route('/{record}/edit'),
         ];
     }
 }

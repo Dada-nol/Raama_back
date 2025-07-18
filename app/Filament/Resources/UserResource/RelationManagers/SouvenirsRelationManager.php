@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\UserResource\RelationManagers;
 
+use App\Models\Souvenir;
 use Filament\Forms;
 use Filament\Tables;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -14,8 +15,7 @@ class SouvenirsRelationManager extends RelationManager
     public function form(Forms\Form $form): Forms\Form
     {
         return $form->schema([
-            Forms\Components\TextInput::make('role')->required(),
-            Forms\Components\DateTimePicker::make('joined_at')->required(),
+            //
         ]);
     }
 
@@ -23,13 +23,37 @@ class SouvenirsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'), // souvenir name
-                Tables\Columns\TextColumn::make('pivot.role')->label('Role'),
+                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('pivot.role'),
                 Tables\Columns\TextColumn::make('pivot.joined_at')->label('Joined At'),
             ])
             ->filters([])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\Action::make('attachSouvenirUser')
+                    ->label('Gérer les membres des souvenirs')
+                    ->form([
+                        Forms\Components\Select::make('souvenir_id')
+                            ->label('Souvenir')
+                            ->options(
+                                Souvenir::all()->pluck('title', 'id')
+                            )
+                            ->required()->live(),
+
+                        Forms\Components\Select::make('role')
+                            ->options([
+                                'admin' => 'Admin',
+                                'member' => 'Member'
+                            ])->nullable()
+                            ->label('Role'),
+                        Forms\Components\DateTimePicker::make('joined_at')
+                            ->label('Rejoins le'),
+                    ])
+                    ->action(function (array $data) {
+                        $this->getOwnerRecord()->souvenirs()->attach($data['souvenir_id'], [
+                            'role' => $data['role'] ?? null,
+                            'joined_at' => $data['joined_at'] ?? null,
+                        ]);
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

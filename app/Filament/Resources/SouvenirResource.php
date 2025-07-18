@@ -23,19 +23,14 @@ class SouvenirResource extends Resource
     {
         return $form
             ->schema([
-                //        'name',
-                // 'description',
-                // 'cover_image',
-                // 'is_closed'
-                Forms\Components\TextInput::make('name')->required()
+                Forms\Components\Select::make('memory_type_id')->relationship('memoryType', 'title')->required(),
+                Forms\Components\TextInput::make('title')->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('description')->required()
+                Forms\Components\TextInput::make('description')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('cover_image')->required()
-                    ->maxLength(255),
-                Forms\Components\Toggle::make('is_closed')
-                    ->label('Souvenir fermé ?')
-                    ->required(),
+                Forms\Components\TextInput::make('cover_image'),
+                Forms\Components\TextInput::make('memory_points')->numeric()->required(),
+
             ]);
     }
 
@@ -43,11 +38,9 @@ class SouvenirResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('is_closed')
-                    ->label('Statut')
-                    ->formatStateUsing(fn(bool $state) => $state ? 'Fermé' : 'Ouvert')
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('title')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('memory_points')->sortable()->searchable(),
+
             ])
             ->filters([
                 //
