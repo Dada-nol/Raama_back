@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MemoryType;
 use App\Models\Souvenir;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -30,16 +31,18 @@ class SouvenirController extends Controller
     {
         $user = $request->user();
         $request->validate([
-            'name' => 'required',
+            'memory_type' => 'required|exists:memory_types,id',
+            'title' => 'required',
             'description',
             'cover_image',
         ]);
 
         $souvenir = Souvenir::create([
-            'name' => $request->name,
+            'memory_type_id' => $request->memory_type,
+            'title' => $request->title,
             'description' => $request->description,
             'cover_image' => $request->cover_image,
-            'is_closed' => false
+            'memory_points' => 0
         ]);
 
         $souvenir->users()->attach($user->id, [

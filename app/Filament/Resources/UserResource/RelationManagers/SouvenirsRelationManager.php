@@ -30,7 +30,7 @@ class SouvenirsRelationManager extends RelationManager
             ->filters([])
             ->headerActions([
                 Tables\Actions\Action::make('attachSouvenirUser')
-                    ->label('Gérer les membres des souvenirs')
+                    ->label('Rejoindre un souvenir')
                     ->form([
                         Forms\Components\Select::make('souvenir_id')
                             ->label('Souvenir')

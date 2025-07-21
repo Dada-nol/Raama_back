@@ -36,6 +36,8 @@ return new class extends Migration
             $table->string('role')->default('member');
             $table->timestamp('joined_at')->useCurrent();
             $table->timestamps();
+
+            $table->unique(['user_id', 'souvenir_id']);
         });
     }
 
