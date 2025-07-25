@@ -34,7 +34,7 @@ class MemoryTypeResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('title')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('description')->sortable(),
 
             ])

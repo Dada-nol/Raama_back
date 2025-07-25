@@ -17,7 +17,6 @@ class Souvenir extends Model
         'user_id',
         'memory_type_id',
         'title',
-        'description',
         'cover_image',
         'memory_points',
     ];

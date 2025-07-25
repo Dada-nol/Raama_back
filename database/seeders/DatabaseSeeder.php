@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\MemoryType;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -38,6 +39,21 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@test.com',
             'password' => 'password',
             'personal_points' => 0
+        ]);
+
+        MemoryType::factory()->create([
+            'title' => 'One per day',
+            'description' => 'Partagez une photo par jour avec vos proches'
+        ]);
+
+        MemoryType::factory()->create([
+            'title' => 'Simple album',
+            'description' => 'Partagez vos souvenirs librement'
+        ]);
+
+        MemoryType::factory()->create([
+            'title' => "Mysteries's Box",
+            'description' => 'Remontons le temps un peu'
         ]);
     }
 }

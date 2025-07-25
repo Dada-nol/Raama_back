@@ -6,6 +6,7 @@ use App\Models\MemoryType;
 use App\Models\Souvenir;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class SouvenirController extends Controller
 {
@@ -34,20 +35,20 @@ class SouvenirController extends Controller
         $request->validate([
             'memory_type' => 'required|exists:memory_types,id',
             'title' => 'required',
-            'description' => 'nullable|string',
             'cover_image' => 'nullable|file|mimes:png,jpg,jpeg|max:5120',
         ]);
 
         if ($request->hasFile('cover_image')) {
-            $path = $request->file('cover_image')->store('souvenirs/cover', 'public');
+            $path = $request->file('cover_image')->store('souvenirs/covers', 'public');
         }
+
+        $publicUrl = url(Storage::url($path));
 
         $souvenir = Souvenir::create([
             'user_id' => $user->id,
             'memory_type_id' => $request->memory_type,
             'title' => $request->title,
-            'description' => $request->description,
-            'cover_image' => $path ?? null,
+            'cover_image' => $publicUrl ?? null,
             'memory_points' => 0
         ]);
 
@@ -89,7 +90,6 @@ class SouvenirController extends Controller
 
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
-            'description' => 'sometimes|nullable|string',
             'cover_image' => 'sometimes|nullable|string',
             'is_closed' => 'sometimes|boolean',
             'users' => 'sometimes|array', // si tu modifies les rôles

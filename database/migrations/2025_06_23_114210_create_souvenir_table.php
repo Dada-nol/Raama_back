@@ -23,7 +23,6 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('memory_type_id')->constrained()->onDelete('cascade');
             $table->string('title');
-            $table->string('description')->nullable();
             $table->string('cover_image')->nullable();
             $table->integer('memory_points')->default(0);
             $table->timestamps();

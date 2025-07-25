@@ -6,6 +6,7 @@ use App\Models\Entry;
 use App\Models\Souvenir;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class EntryController extends Controller
 {
@@ -43,11 +44,12 @@ class EntryController extends Controller
         }
 
         $path = $request->file('image_path')->store('souvenirs/entries', 'public');
+        $publicUrl = url(Storage::url($path));
 
         $entry = Entry::create([
             'user_id' => $user->id,
             'souvenir_id' => $souvenir->id,
-            'image_path' => $path,
+            'image_path' => $publicUrl,
             'caption' => $request->caption,
         ]);
 

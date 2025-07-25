@@ -26,8 +26,6 @@ class SouvenirResource extends Resource
                 Forms\Components\Select::make('memory_type_id')->relationship('memoryType', 'title')->required(),
                 Forms\Components\TextInput::make('title')->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('description')
-                    ->maxLength(255),
                 Forms\Components\TextInput::make('cover_image'),
                 Forms\Components\TextInput::make('memory_points')->numeric()->required(),
 
