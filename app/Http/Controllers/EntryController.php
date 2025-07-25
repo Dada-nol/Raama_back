@@ -26,7 +26,7 @@ class EntryController extends Controller
         $souvenir = $user->souvenirs()->with('users')->findOrFail($id);
 
         $request->validate([
-            'image_path' => 'required|file|mimes:png,jpg,jpeg',
+            'image_path' => 'required|file|mimes:png,jpg,jpeg|max:5120',
             'caption' => 'nullable|string',
         ]);
 
@@ -42,7 +42,7 @@ class EntryController extends Controller
             ], 403);
         }
 
-        $path = $request->file('image_path')->store('entries', 'public');
+        $path = $request->file('image_path')->store('souvenirs/entries', 'public');
 
         $entry = Entry::create([
             'user_id' => $user->id,

@@ -16,9 +16,9 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Nardol',
-            'firstname' => 'Darren',
-            'email' => 'ndarren.dev@gmail.com',
+            'name' => 'Admin',
+            'firstname' => 'Admin',
+            'email' => 'admin@admin.com',
             'password' => 'password',
             'role' => 'admin',
             'personal_points' => 100
@@ -28,13 +28,15 @@ class DatabaseSeeder extends Seeder
             'name' => 'Doe',
             'firstname' => 'Jhon',
             'email' => 'jhondoe@gmail.com',
+            'password' => 'password',
             'personal_points' => 0
         ]);
 
         User::factory()->create([
-            'name' => 'Teset',
-            'firstname' => 'Jeferson',
-            'email' => 'sette@gmail.com',
+            'name' => 'Test',
+            'firstname' => 'Test',
+            'email' => 'test@test.com',
+            'password' => 'password',
             'personal_points' => 0
         ]);
     }

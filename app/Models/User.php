@@ -63,6 +63,14 @@ class User extends Authenticatable
     }
 
     /**
+     * @return HasMany<Souvenir, User>
+     */
+    public function createdSouvenirs(): HasMany
+    {
+        return $this->hasMany(Souvenir::class, 'user_id');
+    }
+
+    /**
      * @return HasMany<Entry, User>
      */
     public function entries(): HasMany

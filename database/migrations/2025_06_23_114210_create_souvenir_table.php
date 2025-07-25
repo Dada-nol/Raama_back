@@ -20,6 +20,7 @@ return new class extends Migration
 
         Schema::create('souvenirs', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('memory_type_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->string('description')->nullable();
@@ -35,6 +36,7 @@ return new class extends Migration
             $table->string('pseudo')->nullable();
             $table->string('role')->default('member');
             $table->timestamp('joined_at')->useCurrent();
+            $table->boolean('can_edit')->default(false);
             $table->timestamps();
 
             $table->unique(['user_id', 'souvenir_id']);

@@ -17,8 +17,10 @@ class SouvenirUser extends Model
         'user_id',
         'pseudo',
         'role',
-        'joined_at'
+        'joined_at',
+        'can_edit'
     ];
+
 
     /**
      * @return BelongsTo<User, SouvenirUser>

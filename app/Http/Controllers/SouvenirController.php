@@ -30,24 +30,31 @@ class SouvenirController extends Controller
     public function store(Request $request): JsonResponse
     {
         $user = $request->user();
+
         $request->validate([
             'memory_type' => 'required|exists:memory_types,id',
             'title' => 'required',
-            'description',
-            'cover_image',
+            'description' => 'nullable|string',
+            'cover_image' => 'nullable|file|mimes:png,jpg,jpeg|max:5120',
         ]);
 
+        if ($request->hasFile('cover_image')) {
+            $path = $request->file('cover_image')->store('souvenirs/cover', 'public');
+        }
+
         $souvenir = Souvenir::create([
+            'user_id' => $user->id,
             'memory_type_id' => $request->memory_type,
             'title' => $request->title,
             'description' => $request->description,
-            'cover_image' => $request->cover_image,
+            'cover_image' => $path ?? null,
             'memory_points' => 0
         ]);
 
         $souvenir->users()->attach($user->id, [
             'role' => 'admin',
             'joined_at' => now(),
+            'can_edit' => true
         ]);
 
         return response()->json($souvenir, 201);
@@ -101,5 +108,12 @@ class SouvenirController extends Controller
         $souvenir->delete();
 
         return response()->json(['message' => 'souvenir supprimé']);
+    }
+
+    public function recent(): JsonResponse
+    {
+        $recent = Souvenir::where('updated_at', '>=', now()->subDays(7))->latest()->take(5)->get();
+
+        return response()->json($recent);
     }
 }
