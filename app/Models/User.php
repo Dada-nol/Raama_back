@@ -23,9 +23,10 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'firstname',
-        'pseudo',
         'email',
         'password',
+        'role',
+        'personal_points'
     ];
 
     /**
@@ -59,6 +60,14 @@ class User extends Authenticatable
         return $this->belongsToMany(Souvenir::class, 'souvenir_users')
             ->withPivot('role', 'joined_at')
             ->withTimestamps();
+    }
+
+    /**
+     * @return HasMany<Souvenir, User>
+     */
+    public function createdSouvenirs(): HasMany
+    {
+        return $this->hasMany(Souvenir::class, 'user_id');
     }
 
     /**

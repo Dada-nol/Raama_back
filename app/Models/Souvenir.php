@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -13,10 +14,11 @@ class Souvenir extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'name',
-        'description',
+        'user_id',
+        'memory_type_id',
+        'title',
         'cover_image',
-        'is_closed'
+        'memory_points',
     ];
 
     /**
@@ -25,8 +27,16 @@ class Souvenir extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'souvenir_users')
-            ->withPivot('role', 'joined_at')
+            ->withPivot('pseudo', 'role', 'joined_at', 'can_edit')
             ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsTo<User, Souvenir>
+     */
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
@@ -35,5 +45,13 @@ class Souvenir extends Model
     public function entries(): HasMany
     {
         return $this->hasMany(Entry::class);
+    }
+
+    /**
+     * @return BelongsTo<MemoryType, Souvenir>
+     */
+    public function memoryType(): BelongsTo
+    {
+        return $this->belongsTo(MemoryType::class);
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\EntryResource\Pages;
-use App\Filament\Resources\EntryResource\RelationManagers;
-use App\Models\Entry;
+use App\Filament\Resources\MemoryTypeResource\Pages;
+use App\Filament\Resources\MemoryTypeResource\RelationManagers;
+use App\Models\MemoryType;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,9 +13,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class EntryResource extends Resource
+class MemoryTypeResource extends Resource
 {
-    protected static ?string $model = Entry::class;
+    protected static ?string $model = MemoryType::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -23,13 +23,10 @@ class EntryResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('image_path')->required()
+                Forms\Components\TextInput::make('title')->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('caption')->required()
+                Forms\Components\TextInput::make('description')
                     ->maxLength(255),
-                Forms\Components\Select::make('user_id')->relationship('user', 'name')->required(),
-                Forms\Components\Select::make('souvenir_id')->relationship('souvenir', 'title')->required(),
-
             ]);
     }
 
@@ -37,16 +34,15 @@ class EntryResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user.name')->searchable(),
-                Tables\Columns\TextColumn::make('souvenir.title'),
-                Tables\Columns\TextColumn::make('created_at'),
+                Tables\Columns\TextColumn::make('title')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('description')->sortable(),
+
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -65,9 +61,9 @@ class EntryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListEntries::route('/'),
-            'create' => Pages\CreateEntry::route('/create'),
-            'edit' => Pages\EditEntry::route('/{record}/edit'),
+            'index' => Pages\ListMemoryTypes::route('/'),
+            'create' => Pages\CreateMemoryType::route('/create'),
+            'edit' => Pages\EditMemoryType::route('/{record}/edit'),
         ];
     }
 }

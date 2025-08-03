@@ -11,12 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::create('memory_types', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->string('description')->nullable();
+            $table->timestamps();
+        });
+
         Schema::create('souvenirs', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('description')->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('memory_type_id')->constrained()->onDelete('cascade');
+            $table->string('title');
             $table->string('cover_image')->nullable();
-            $table->boolean('is_closed');
+            $table->integer('memory_points')->default(0);
             $table->timestamps();
         });
 
@@ -24,9 +32,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('souvenir_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('role');
+            $table->string('pseudo')->nullable();
+            $table->string('role')->default('member');
             $table->timestamp('joined_at')->useCurrent();
+            $table->boolean('can_edit')->default(false);
             $table->timestamps();
+
+            $table->unique(['user_id', 'souvenir_id']);
         });
     }
 
@@ -35,6 +47,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('memory_types');
         Schema::dropIfExists('souvenir');
         Schema::dropIfExists('souvenir_users');
     }

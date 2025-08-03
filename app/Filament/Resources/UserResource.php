@@ -27,12 +27,14 @@ class UserResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('firstname')->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('pseudo')->required()
-                    ->maxLength(255),
                 Forms\Components\TextInput::make('email')->required()
                     ->email()->unique(),
                 Forms\Components\TextInput::make('password')->required()
                     ->password(),
+                Forms\Components\Select::make('role')->options(['user' => 'User', 'admin' => 'Admin']),
+                Forms\Components\TextInput::make('personal_points')->numeric()
+
+
             ]);
     }
 
@@ -40,8 +42,10 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('email'),
+                Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('firstname')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('personal_points')->sortable(),
+                Tables\Columns\TextColumn::make('email')->searchable(),
             ])
             ->filters([
                 //
