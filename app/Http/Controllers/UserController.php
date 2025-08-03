@@ -27,7 +27,7 @@ class UserController extends Controller
     $request->validate([
       'name' => 'required',
       'firstname' => 'required',
-      'pseudo' => 'required|unique:users',
+      // 'pseudo' => 'required|unique:users',
       'email' => 'required|email|unique:users',
       'password' => 'required|min:8|confirmed'
     ]);
@@ -35,7 +35,7 @@ class UserController extends Controller
     $user = User::create([
       'name' => $request->name,
       'firstname' => $request->firstname,
-      'pseudo' => $request->pseudo,
+      // 'pseudo' => $request->pseudo,
       'email' => $request->email,
       'password' => bcrypt($request->password)
     ]);
@@ -66,19 +66,13 @@ class UserController extends Controller
     ]);
   }
 
-  public function logout(Request $request): JsonResponse
-  {
-    $request->user()->currentAccessToken()->delete();
-
-    return response()->json(['message' => 'Déconnexion réussie']);
-  }
 
   public function update(Request $request, User $user): JsonResponse
   {
     $request->validate([
       'name' => 'string|max:255',
       'firstname' => 'string|max:255',
-      'pseudo' => 'string|max:255|unique:users,pseudo,' . $user->id,
+      // 'pseudo' => 'string|max:255|unique:users,pseudo,' . $user->id,
       'email' => 'email|unique:users,email,' . $user->id,
       'password' => 'nullable|min:8|confirmed'
     ]);
@@ -99,11 +93,18 @@ class UserController extends Controller
     $user->update([
       'name' => $request->name,
       'firstname' => $request->firstname,
-      'pseudo' => $request->pseudo,
+      // 'pseudo' => $request->pseudo,
       'email' => $request->email,
     ]);
 
     return response()->json(['message' => 'Utilisateur mis à jour', 'user' => $user]);
+  }
+
+  public function logout(Request $request): JsonResponse
+  {
+    $request->user()->currentAccessToken()->delete();
+
+    return response()->json(['message' => 'Déconnexion réussie']);
   }
 
   public function delete(Request $request): JsonResponse
@@ -115,7 +116,7 @@ class UserController extends Controller
         'email' => ['Les informations sont invalides.'],
       ]);
     }
-    $request->user()->currentAccessToken()->delete();
+    $user->currentAccessToken()->delete();
 
     $user->delete();
 

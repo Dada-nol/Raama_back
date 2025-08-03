@@ -6,16 +6,28 @@ use App\Models\Entry;
 use App\Models\Souvenir;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class EntryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request, int $id)
     {
-        //
+        $user = $request->user();
+        $souvenir = $user->souvenirs()->with('users')->find($id);
+
+        if (!$souvenir) {
+            return response()->json(['message' => 'Souvenir introuvable'], 404);
+        }
+
+        $entries = $souvenir->entries;
+
+        if (!$entries) {
+            return response()->json(['message' => 'Entries introuvables'], 404);
+        }
+
+        return response()->json($entries);
     }
 
     /**
@@ -27,7 +39,7 @@ class EntryController extends Controller
         $souvenir = $user->souvenirs()->with('users')->findOrFail($id);
 
         $request->validate([
-            'image_path' => 'required|file|mimes:png,jpg,jpeg|max:5120',
+            'image_path' => 'required|file|mimes:png,jpg,jpeg|max:10240',
             'caption' => 'nullable|string',
         ]);
 
@@ -44,12 +56,11 @@ class EntryController extends Controller
         }
 
         $path = $request->file('image_path')->store('souvenirs/entries', 'public');
-        $publicUrl = url(Storage::url($path));
 
         $entry = Entry::create([
             'user_id' => $user->id,
             'souvenir_id' => $souvenir->id,
-            'image_path' => $publicUrl,
+            'image_path' => $path,
             'caption' => $request->caption,
         ]);
 

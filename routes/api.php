@@ -30,6 +30,7 @@ Route::get('/memory-type', [MemoryTypeController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
   Route::post('/souvenir/{id}/entry', [EntryController::class, 'store']);
+  Route::get('/souvenir/{id}/entry', [EntryController::class, 'index']);
   /* Route::get('/souvenirs', [SouvenirController::class, 'index']);
   Route::get('/souvenir/{id}', [SouvenirController::class, 'show']);
   Route::put('/souvenir/{id}', [SouvenirController::class, 'update']);

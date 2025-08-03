@@ -28,7 +28,7 @@ class EntryResource extends Resource
                 Forms\Components\TextInput::make('caption')->required()
                     ->maxLength(255),
                 Forms\Components\Select::make('user_id')->relationship('user', 'name')->required(),
-                Forms\Components\Select::make('souvenir_id')->relationship('souvenir', 'name')->required(),
+                Forms\Components\Select::make('souvenir_id')->relationship('souvenir', 'title')->required(),
 
             ]);
     }
@@ -38,13 +38,15 @@ class EntryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')->searchable(),
-                Tables\Columns\TextColumn::make('souvenir.name'),
+                Tables\Columns\TextColumn::make('souvenir.title'),
+                Tables\Columns\TextColumn::make('created_at'),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

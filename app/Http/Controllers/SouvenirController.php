@@ -6,7 +6,6 @@ use App\Models\MemoryType;
 use App\Models\Souvenir;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class SouvenirController extends Controller
 {
@@ -35,20 +34,18 @@ class SouvenirController extends Controller
         $request->validate([
             'memory_type' => 'required|exists:memory_types,id',
             'title' => 'required',
-            'cover_image' => 'nullable|file|mimes:png,jpg,jpeg|max:5120',
+            'cover_image' => 'nullable|file|mimes:png,jpg,jpeg|max:10240',
         ]);
 
         if ($request->hasFile('cover_image')) {
             $path = $request->file('cover_image')->store('souvenirs/covers', 'public');
         }
 
-        $publicUrl = url(Storage::url($path));
-
         $souvenir = Souvenir::create([
             'user_id' => $user->id,
             'memory_type_id' => $request->memory_type,
             'title' => $request->title,
-            'cover_image' => $publicUrl ?? null,
+            'cover_image' => $path ?? null,
             'memory_points' => 0
         ]);
 
@@ -67,7 +64,7 @@ class SouvenirController extends Controller
     public function show(int $id, Request $request): JsonResponse
     {
         $user = $request->user();
-        $souvenir = $user->souvenirs()->with('users')->find($id);
+        $souvenir = $user->souvenirs()->with(['entries', 'users'])->findOrFail($id);
 
         if (!$souvenir) {
             return response()->json(['message' => 'Souvenir introuvable'], 404);
@@ -110,9 +107,15 @@ class SouvenirController extends Controller
         return response()->json(['message' => 'souvenir supprimé']);
     }
 
-    public function recent(): JsonResponse
+    public function recent(Request $request): JsonResponse
     {
-        $recent = Souvenir::where('updated_at', '>=', now()->subDays(7))->latest()->take(5)->get();
+        $user = $request->user();
+        // $recent = $user->souvenirs()->where('updated_at', '>=', now()->subDays(7))->latest()->take(3)->get();
+
+        $recent = $user->souvenirs()
+            ->orderByDesc('updated_at')
+            ->take(3)
+            ->get();
 
         return response()->json($recent);
     }
