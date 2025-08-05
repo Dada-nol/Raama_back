@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('description')->nullable();
+            $table->boolean('isAvailable')->default(false);
             $table->timestamps();
         });
 
@@ -35,7 +36,6 @@ return new class extends Migration
             $table->string('pseudo')->nullable();
             $table->string('role')->default('member');
             $table->timestamp('joined_at')->useCurrent();
-            $table->boolean('can_edit')->default(false);
             $table->timestamps();
 
             $table->unique(['user_id', 'souvenir_id']);

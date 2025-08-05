@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SouvenirUser extends Model
 {
+    /** @use HasFactory<\Database\Factories\SouvenirUserFactory> */
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable
      * @var list<string>
@@ -18,7 +22,6 @@ class SouvenirUser extends Model
         'pseudo',
         'role',
         'joined_at',
-        'can_edit'
     ];
 
 
