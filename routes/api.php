@@ -8,6 +8,7 @@ use App\Http\Controllers\EntryController;
 use App\Http\Controllers\MemoryTypeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SouvenirController;
+use App\Http\Controllers\SouvenirInviteController;
 use App\Models\MemoryType;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +35,9 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->get('/recent', [SouvenirController::class, 'recent']);
+
+Route::get('/invite/{token}', [SouvenirInviteController::class, 'joinFromToken'])->name('souvenirs.invite.show');
+Route::post('/souvenirs/{souvenir}/invite', [SouvenirInviteController::class, 'generateInvite'])->middleware('auth');
 
 // Alternative
 // Route::middleware('auth:sanctum')->apiResource('souvenir', SouvenirController::class);
