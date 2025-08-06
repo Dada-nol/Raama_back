@@ -2,18 +2,45 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Souvenir;
+use App\Models\SouvenirInvite;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Str;
+
+
 
 class SouvenirInviteController extends Controller
 {
+    use AuthorizesRequests;
+
+    public function generateInvite(Souvenir $souvenir)
+    {
+        // Autoriser uniquement le créateur ou un membre à inviter
+        $this->authorize('invite', $souvenir);
+
+        $token = Str::uuid();
+
+        $invite = SouvenirInvite::create([
+            'souvenir_id' => $souvenir->id,
+            'token' => $token,
+            'expires_at' => now()->addDays(7),
+        ]);
+
+        return response()->json([
+            'invite_link' => route('souvenirs.invite.show', ['token' => $token])
+        ]);
+    }
+
     public function joinFromToken(string $token)
     {
         $invite = SouvenirInvite::where('token', $token)->firstOrFail();
 
-        // Option : vérifier expiration
-        // if ($invite->expires_at && now()->gt($invite->expires_at)) { abort(410); }
+        if ($invite->expires_at && now()->gt($invite->expires_at)) {
+            abort(410);
+        }
 
         $souvenir = $invite->souvenir;
 
