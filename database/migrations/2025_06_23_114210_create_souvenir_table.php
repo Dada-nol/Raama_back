@@ -36,6 +36,7 @@ return new class extends Migration
             $table->string('pseudo')->nullable();
             $table->string('role')->default('member');
             $table->timestamp('joined_at')->useCurrent();
+            $table->timestamp('last_visited_at')->nullable();
             $table->timestamps();
 
             $table->unique(['user_id', 'souvenir_id']);

@@ -22,6 +22,7 @@ class SouvenirUser extends Model
         'pseudo',
         'role',
         'joined_at',
+        'last_visited_at',
     ];
 
 

@@ -31,7 +31,7 @@ class Souvenir extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'souvenir_users')
-            ->withPivot('pseudo', 'role', 'joined_at')
+            ->withPivot('pseudo', 'role', 'joined_at', 'last_visited_at')
             ->withTimestamps();
     }
 

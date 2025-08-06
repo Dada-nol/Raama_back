@@ -184,4 +184,36 @@ class SouvenirApiTest extends TestCase
 
     $response->assertStatus(403);
   }
+
+  /** @test */
+  public function it_can_see_recent_souvenir()
+  {
+    $user = User::factory()->create();
+    Sanctum::actingAs($user);
+
+    $response = $this->getJson("/api/recent");
+    $response->assertStatus(200);
+  }
+
+  /** @test */
+  public function recent_souvenir_count_3()
+  {
+    $user = User::factory()->create();
+    Sanctum::actingAs($user);
+
+    $souvenir = Souvenir::factory()->for($user, 'creator')->count(10)->create();
+    foreach ($souvenir as $item) {
+      $item->users()->attach($user->id, ['role' => 'admin']);
+    }
+
+    $response = $this->getJson("/api/recent");
+    $response->assertStatus(200)->assertJsonCount(3);
+  }
+
+  /** @test */
+  public function unathenticate_user_cannot_see_recent_souvenir()
+  {
+    $response = $this->getJson("/api/recent");
+    $response->assertStatus(401);
+  }
 }
