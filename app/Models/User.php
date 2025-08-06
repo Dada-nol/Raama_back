@@ -60,7 +60,7 @@ class User extends Authenticatable implements FilamentUser
     public function souvenirs(): BelongsToMany
     {
         return $this->belongsToMany(Souvenir::class, 'souvenir_users')
-            ->withPivot('pseudo', 'role', 'joined_at')
+            ->withPivot('pseudo', 'role', 'joined_at', 'last_visited_at')
             ->withTimestamps();
     }
 

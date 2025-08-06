@@ -65,6 +65,10 @@ class SouvenirController extends Controller
         $user = $request->user();
         $souvenir = $user->souvenirs()->with(['entries', 'users'])->findOrFail($id);
 
+        $souvenir->users()->updateExistingPivot($user->id, [
+            'last_visited_at' => now()
+        ]);
+
         if (!$souvenir) {
             return response()->json(['message' => 'Souvenir introuvable'], 404);
         }
@@ -137,7 +141,7 @@ class SouvenirController extends Controller
         // $recent = $user->souvenirs()->where('updated_at', '>=', now()->subDays(7))->latest()->take(3)->get();
 
         $recent = $user->souvenirs()
-            ->orderByDesc('updated_at')
+            ->orderByPivot('last_visited_at', 'desc')
             ->take(3)
             ->get();
 
