@@ -36,8 +36,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::middleware('auth:sanctum')->get('/recent', [SouvenirController::class, 'recent']);
 
+Route::middleware('auth:sanctum')->post('/souvenirs/{souvenir}/invite', [SouvenirInviteController::class, 'generateInvite']);
 Route::get('/invite/{token}', [SouvenirInviteController::class, 'joinFromToken'])->name('souvenirs.invite.show');
-Route::post('/souvenirs/{souvenir}/invite', [SouvenirInviteController::class, 'generateInvite'])->middleware('auth');
 
 // Alternative
 // Route::middleware('auth:sanctum')->apiResource('souvenir', SouvenirController::class);
