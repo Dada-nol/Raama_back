@@ -216,4 +216,49 @@ class SouvenirApiTest extends TestCase
     $response = $this->getJson("/api/recent");
     $response->assertStatus(401);
   }
+
+  /** @test */
+  public function it_can_create_an_invitation_token()
+  {
+    $user = User::factory()->create();
+    Sanctum::actingAs($user);
+
+    $souvenir = Souvenir::factory()->for($user, 'creator')->count(10)->create();
+    foreach ($souvenir as $item) {
+      $item->users()->attach($user->id, ['role' => 'admin']);
+    }
+
+    $response = $this->getJson("/api/recent");
+    $response->assertStatus(200)->assertJsonCount(3);
+  }
+
+  /** @test */
+  public function it_can_invite_a_user_to_a_souvenir()
+  {
+    $user = User::factory()->create();
+    Sanctum::actingAs($user);
+
+    $souvenir = Souvenir::factory()->for($user, 'creator')->count(10)->create();
+    foreach ($souvenir as $item) {
+      $item->users()->attach($user->id, ['role' => 'admin']);
+    }
+
+    $response = $this->getJson("/api/recent");
+    $response->assertStatus(200)->assertJsonCount(3);
+  }
+
+  /** @test */
+  public function it_can_invite_a_guest_to_a_souvenir()
+  {
+    $user = User::factory()->create();
+    Sanctum::actingAs($user);
+
+    $souvenir = Souvenir::factory()->for($user, 'creator')->count(10)->create();
+    foreach ($souvenir as $item) {
+      $item->users()->attach($user->id, ['role' => 'admin']);
+    }
+
+    $response = $this->getJson("/api/recent");
+    $response->assertStatus(200)->assertJsonCount(3);
+  }
 }
