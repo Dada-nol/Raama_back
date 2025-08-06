@@ -58,4 +58,9 @@ class Souvenir extends Model
     {
         return $this->belongsTo(MemoryType::class);
     }
+
+    public function invites()
+    {
+        return $this->hasMany(SouvenirInvite::class);
+    }
 }

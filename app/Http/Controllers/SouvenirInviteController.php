@@ -16,14 +16,24 @@ class SouvenirInviteController extends Controller
 {
     use AuthorizesRequests;
 
-    public function generateInvite(Souvenir $souvenir)
+    public function generateInvite(Request $request, Souvenir $souvenir)
     {
+        $user = $request->user();
+
+        $souvenir->load('users');
+
+        $role = $souvenir->users
+            ->firstWhere('id', $user->id)?->pivot->role;
+
+        if ($role !== "admin") {
+            return response()->json(['message' => 'Vous n\'avez pas les permissions nécessaire pour faire cela'], 403);
+        }
         // Autoriser uniquement le créateur ou un membre à inviter
-        $this->authorize('invite', $souvenir);
+        // $this->authorize('invite', $souvenir);
 
         $token = Str::uuid();
 
-        $invite = SouvenirInvite::create([
+        SouvenirInvite::create([
             'souvenir_id' => $souvenir->id,
             'token' => $token,
             'expires_at' => now()->addDays(7),
@@ -31,7 +41,7 @@ class SouvenirInviteController extends Controller
 
         return response()->json([
             'invite_link' => route('souvenirs.invite.show', ['token' => $token])
-        ]);
+        ], 201);
     }
 
     public function joinFromToken(string $token)
@@ -57,23 +67,6 @@ class SouvenirInviteController extends Controller
             $souvenir->users()->attach($user->id);
         }
 
-        return redirect()->route('souvenirs.show', $souvenir->id);
-    }
-
-    public function handle($request, Closure $next)
-    {
-        if (Auth::check() && session()->has('pending_invite_token')) {
-            $token = session()->pull('pending_invite_token');
-            $invite = SouvenirInvite::where('token', $token)->first();
-
-            if ($invite) {
-                $souvenir = $invite->souvenir;
-                if (!$souvenir->users->contains(Auth::id())) {
-                    $souvenir->users()->attach(Auth::id());
-                }
-            }
-        }
-
-        return $next($request);
+        return redirect()->route('souvenir.show', $souvenir->id);
     }
 }
