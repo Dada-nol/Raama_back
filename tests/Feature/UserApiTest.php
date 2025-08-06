@@ -108,8 +108,6 @@ class UserApiTest extends TestCase
         $user = User::factory()->create();
         Sanctum::actingAs($user);
 
-        $response = $this->getJson('/api/user');
-
         $response = $this->putJson("/api/user/{$user->id}", [
             'name' => 'test',
             'firstname' => 'test',

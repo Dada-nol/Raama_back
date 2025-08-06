@@ -2,19 +2,21 @@
 
 namespace Tests\Feature;
 
+use App\Models\MemoryType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class MemoryTypeApiTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
-    public function test_example(): void
-    {
-        $response = $this->get('/');
+    use RefreshDatabase;
 
-        $response->assertStatus(200);
+    /** @test */
+    public function it_can_read_all_memory_type()
+    {
+        MemoryType::factory()->count(3)->create();
+
+        $response = $this->getJson('/api/memory-type');
+
+        $response->assertStatus(200)->assertJsonCount(3);
     }
 }
