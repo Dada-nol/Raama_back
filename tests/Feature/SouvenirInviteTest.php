@@ -60,6 +60,24 @@ class SouvenirInviteTest extends TestCase
   }
 
   /** @test */
+  public function it_cannot_join_an_expired_souvenir()
+  {
+    $user = User::factory()->create();
+    Sanctum::actingAs($user);
+
+    $souvenir = Souvenir::factory()->create();
+
+    $invite = SouvenirInvite::factory()
+      ->for($souvenir)
+      ->create([
+        'expires_at' => now()->subMinute(),
+      ]);
+
+    $response = $this->getJson("/api/invite/{$invite->token}");
+    $response->assertStatus(410);
+  }
+
+  /** @test */
   public function guest_is_redirected_to_login_when_joining_a_souvenir()
   {
     $souvenir = Souvenir::factory()->create();
