@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('entries', function (Blueprint $table) {
+        Schema::create('user_streaks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('souvenir_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('image_path');
-            $table->string('caption', 255)->nullable();
-            $table->timestamps();
+            $table->integer('current_streak')->default(0);
+            $table->integer('longest_streak')->nullable();
+            $table->date('last_contribution_date')->nullable();
         });
     }
 
@@ -26,6 +25,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('entries');
+        Schema::table('user_streaks', function (Blueprint $table) {
+            Schema::dropIfExists('user_streaks');
+        });
     }
 };

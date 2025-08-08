@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -9,6 +10,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Souvenir extends Model
 {
+    /** @use HasFactory<\Database\Factories\SouvenirFactory> */
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      * @var list<string>
@@ -27,7 +31,7 @@ class Souvenir extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'souvenir_users')
-            ->withPivot('pseudo', 'role', 'joined_at', 'can_edit')
+            ->withPivot('pseudo', 'role', 'joined_at', 'last_visited_at')
             ->withTimestamps();
     }
 
@@ -53,5 +57,10 @@ class Souvenir extends Model
     public function memoryType(): BelongsTo
     {
         return $this->belongsTo(MemoryType::class);
+    }
+
+    public function invites()
+    {
+        return $this->hasMany(SouvenirInvite::class);
     }
 }
