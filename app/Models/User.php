@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
@@ -58,7 +60,7 @@ class User extends Authenticatable
     public function souvenirs(): BelongsToMany
     {
         return $this->belongsToMany(Souvenir::class, 'souvenir_users')
-            ->withPivot('role', 'joined_at')
+            ->withPivot('pseudo', 'role', 'joined_at', 'last_visited_at')
             ->withTimestamps();
     }
 
@@ -76,5 +78,10 @@ class User extends Authenticatable
     public function entries(): HasMany
     {
         return $this->hasMany(Entry::class);
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return str_ends_with($this->role, 'admin');
     }
 }

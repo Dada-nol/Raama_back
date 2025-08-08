@@ -52,7 +52,6 @@ class SouvenirController extends Controller
         $souvenir->users()->attach($user->id, [
             'role' => 'admin',
             'joined_at' => now(),
-            'can_edit' => true
         ]);
 
         return response()->json($souvenir, 201);
@@ -65,6 +64,10 @@ class SouvenirController extends Controller
     {
         $user = $request->user();
         $souvenir = $user->souvenirs()->with(['entries', 'users'])->findOrFail($id);
+
+        $souvenir->users()->updateExistingPivot($user->id, [
+            'last_visited_at' => now()
+        ]);
 
         if (!$souvenir) {
             return response()->json(['message' => 'Souvenir introuvable'], 404);
@@ -85,23 +88,48 @@ class SouvenirController extends Controller
             return response()->json(['message' => 'Souvenir introuvable'], 404);
         }
 
+        $role = $souvenir->users
+            ->firstWhere('id', $user->id)?->pivot->role;
+
+        if ($role !== "admin") {
+            return response()->json(['message' => 'Vous n\'avez pas les permissions nécessaire pour faire cela'], 403);
+        }
+
         $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'cover_image' => 'sometimes|nullable|string',
-            'is_closed' => 'sometimes|boolean',
-            'users' => 'sometimes|array', // si tu modifies les rôles
+            'title' => 'sometimes|string|max:255',
+            'cover_image' => 'sometimes|nullable|file|mimes:png,jpg,jpeg|max:10240',
+            'users' => 'sometimes|array',
         ]);
+
+        if ($request->hasFile('cover_image')) {
+            $path = $request->file('cover_image')->store('souvenirs', 'public');
+            $validated['cover_image'] = $path;
+        }
 
         $souvenir->update($validated);
 
-        return response()->json($souvenir, 200);
+        return response()->json([
+            'id' => $souvenir->id,
+            'title' => $souvenir->title,
+            'cover_image' => $souvenir->cover_image,
+        ], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function delete(Souvenir $souvenir): JsonResponse
+    public function delete(Request $request, Souvenir $souvenir): JsonResponse
     {
+        $user = $request->user();
+
+        $souvenir->load('users');
+
+        $role = $souvenir->users
+            ->firstWhere('id', $user->id)?->pivot->role;
+
+        if ($role !== "admin") {
+            return response()->json(['message' => 'Vous n\'avez pas les permissions nécessaire pour faire cela'], 403);
+        }
         $souvenir->delete();
 
         return response()->json(['message' => 'souvenir supprimé']);
@@ -113,7 +141,7 @@ class SouvenirController extends Controller
         // $recent = $user->souvenirs()->where('updated_at', '>=', now()->subDays(7))->latest()->take(3)->get();
 
         $recent = $user->souvenirs()
-            ->orderByDesc('updated_at')
+            ->orderByPivot('last_visited_at', 'desc')
             ->take(3)
             ->get();
 

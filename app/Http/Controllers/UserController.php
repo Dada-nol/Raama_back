@@ -27,7 +27,6 @@ class UserController extends Controller
     $request->validate([
       'name' => 'required',
       'firstname' => 'required',
-      // 'pseudo' => 'required|unique:users',
       'email' => 'required|email|unique:users',
       'password' => 'required|min:8|confirmed'
     ]);
@@ -35,7 +34,6 @@ class UserController extends Controller
     $user = User::create([
       'name' => $request->name,
       'firstname' => $request->firstname,
-      // 'pseudo' => $request->pseudo,
       'email' => $request->email,
       'password' => bcrypt($request->password)
     ]);
@@ -45,7 +43,7 @@ class UserController extends Controller
     return response()->json([
       'user' => $user,
       'token' => $token,
-    ]);
+    ], 201);
   }
 
   public function login(Request $request): JsonResponse
@@ -72,7 +70,6 @@ class UserController extends Controller
     $request->validate([
       'name' => 'string|max:255',
       'firstname' => 'string|max:255',
-      // 'pseudo' => 'string|max:255|unique:users,pseudo,' . $user->id,
       'email' => 'email|unique:users,email,' . $user->id,
       'password' => 'nullable|min:8|confirmed'
     ]);

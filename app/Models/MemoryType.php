@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MemoryType extends Model
 {
+    /** @use HasFactory<\Database\Factories\MemoryTypeFactory> */
     use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
