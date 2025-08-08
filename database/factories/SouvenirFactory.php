@@ -16,7 +16,6 @@ class SouvenirFactory extends Factory
       'memory_type_id' => MemoryType::factory(),
       'title' => $this->faker->name(),
       'cover_image' => $this->faker->randomElement(['image-1', 'image-2', 'image-3']),
-      'memory_points' => $this->faker->numberBetween(5, 200),
     ];
   }
 }
