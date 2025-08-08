@@ -6,6 +6,7 @@ use App\Models\Entry;
 use App\Models\Souvenir;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EntryController extends Controller
 {
@@ -43,7 +44,6 @@ class EntryController extends Controller
             'caption' => 'nullable|string',
         ]);
 
-        // Règle : un seul upload par jour
         $alreadyUploaded = Entry::where('user_id', $user->id)
             ->where('souvenir_id', $souvenir->id)
             ->whereDate('created_at', now()->toDateString())
@@ -57,15 +57,25 @@ class EntryController extends Controller
 
         $path = $request->file('image_path')->store('souvenirs/entries', 'public');
 
-        $entry = Entry::create([
-            'user_id' => $user->id,
-            'souvenir_id' => $souvenir->id,
-            'image_path' => $path,
-            'caption' => $request->caption,
-        ]);
+        DB::transaction(function () use ($user, $souvenir, $path, $request) {
+            if (app()->environment('testing') && $request->has('force_error')) {
+                throw new \Exception("Forced error for test");
+            }
 
-        return response()->json($entry, 201);
+            Entry::create([
+                'user_id' => $user->id,
+                'souvenir_id' => $souvenir->id,
+                'image_path' => $path,
+                'caption' => $request->caption,
+            ]);
+
+            $user->increment('personal_points', 10);
+            $souvenir->increment('memory_points', 50);
+        });
+
+        return response()->json(['message' => 'Entrée créée avec succès'], 201);
     }
+
 
     /**
      * Display the specified resource.
