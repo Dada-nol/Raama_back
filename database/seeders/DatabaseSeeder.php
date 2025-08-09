@@ -13,8 +13,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->count(10)->create();
-
         User::factory()->create([
             'name' => 'Admin',
             'firstname' => 'Admin',
@@ -26,7 +24,8 @@ class DatabaseSeeder extends Seeder
 
         MemoryType::factory()->create([
             'title' => 'One per day',
-            'description' => 'Partagez une photo par jour avec vos proches'
+            'description' => 'Partagez une photo par jour avec vos proches',
+            'isAvailable' => true
         ]);
 
         MemoryType::factory()->create([
