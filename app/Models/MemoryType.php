@@ -19,6 +19,7 @@ class MemoryType extends Model
     protected $fillable = [
         'title',
         'description',
+        'isAvailable'
     ];
 
     /**

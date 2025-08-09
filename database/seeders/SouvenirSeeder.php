@@ -17,11 +17,9 @@ class SouvenirSeeder extends Seeder
    */
   public function run(): void
   {
-    $entryFactory = Entry::factory()->count(30);
     $souvenirUser = SouvenirUser::factory()->count(1, 4);
 
     Souvenir::factory()->count(10)
-      ->has($entryFactory)
       ->has($souvenirUser, 'users')
       ->create();
   }

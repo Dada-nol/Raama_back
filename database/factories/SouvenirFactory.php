@@ -13,9 +13,8 @@ class SouvenirFactory extends Factory
   {
     return [
       'user_id' => User::factory(),
-      'memory_type_id' => MemoryType::factory(),
+      'memory_type_id' => 1,
       'title' => $this->faker->name(),
-      'cover_image' => $this->faker->randomElement(['image-1', 'image-2', 'image-3']),
     ];
   }
 }

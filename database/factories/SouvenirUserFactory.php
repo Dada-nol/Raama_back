@@ -24,7 +24,7 @@ class SouvenirUserFactory extends Factory
       'souvenir_id' => Souvenir::factory(),
       'user_id' => User::factory(),
       'pseudo' => $this->faker->name(),
-      'role' => $this->faker->randomElement(['member', 'admin', 'observer']),
+      'role' => $this->faker->randomElement(['member', 'admin']),
     ];
   }
 }

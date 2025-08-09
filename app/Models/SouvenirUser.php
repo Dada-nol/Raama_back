@@ -25,7 +25,6 @@ class SouvenirUser extends Model
         'last_visited_at',
     ];
 
-
     /**
      * @return BelongsTo<User, SouvenirUser>
      */
