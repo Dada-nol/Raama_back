@@ -25,8 +25,7 @@ class SouvenirResource extends Resource
             ->schema([
                 Forms\Components\Select::make('user_id')->relationship('creator', 'name')->required(),
                 Forms\Components\Select::make('memory_type_id')->relationship('memoryType', 'title')->required(),
-                Forms\Components\TextInput::make('title')->required()
-                    ->maxLength(255),
+                Forms\Components\TextInput::make('title')->required()->maxLength(255),
                 Forms\Components\FileUpload::make('cover_image')
                     ->label('Image de fond')
                     ->directory('souvenirs/covers')
@@ -35,7 +34,6 @@ class SouvenirResource extends Resource
                     ->visibility('public')
                     ->disk('public'),
                 Forms\Components\TextInput::make('memory_points')->numeric()->required(),
-
             ]);
     }
 
