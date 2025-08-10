@@ -67,6 +67,7 @@ class UserResource extends Resource
         return [
             RelationManagers\SouvenirsRelationManager::class,
             RelationManagers\CreatedSouvenirsRelationManager::class,
+            RelationManagers\EntriesRelationManager::class,
         ];
     }
 
