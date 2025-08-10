@@ -44,14 +44,16 @@ class UserResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('firstname')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('email')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('role'),
                 Tables\Columns\TextColumn::make('personal_points')->sortable(),
-                Tables\Columns\TextColumn::make('email')->searchable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -64,6 +66,8 @@ class UserResource extends Resource
     {
         return [
             RelationManagers\SouvenirsRelationManager::class,
+            RelationManagers\CreatedSouvenirsRelationManager::class,
+            RelationManagers\EntriesRelationManager::class,
         ];
     }
 

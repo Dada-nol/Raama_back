@@ -1,29 +1,23 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\UserResource\RelationManagers;
 
-use App\Filament\Resources\SouvenirResource\Pages;
-use App\Filament\Resources\SouvenirResource\RelationManagers;
-use App\Models\Souvenir;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class SouvenirResource extends Resource
+class CreatedSouvenirsRelationManager extends RelationManager
 {
-    protected static ?string $model = Souvenir::class;
+    protected static string $relationship = 'createdSouvenirs';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('user_id')->relationship('creator', 'name')->required(),
                 Forms\Components\Select::make('memory_type_id')->relationship('memoryType', 'title')->required(),
                 Forms\Components\TextInput::make('title')->required()
                     ->maxLength(255),
@@ -35,21 +29,23 @@ class SouvenirResource extends Resource
                     ->visibility('public')
                     ->disk('public'),
                 Forms\Components\TextInput::make('memory_points')->numeric()->required(),
-
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('memoryType.title')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('creator.name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('title')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('memory_points')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('created_at')->sortable()->searchable(),
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -60,21 +56,5 @@ class SouvenirResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            RelationManagers\EntriesRelationManager::class,
-        ];
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListSouvenirs::route('/'),
-            'create' => Pages\CreateSouvenir::route('/create'),
-            'edit' => Pages\EditSouvenir::route('/{record}/edit'),
-        ];
     }
 }
