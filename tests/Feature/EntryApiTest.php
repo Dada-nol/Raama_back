@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Entry;
+use App\Models\MemoryType;
 use App\Models\Souvenir;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -174,6 +175,38 @@ class EntryApiTest extends TestCase
 
         $file2 = UploadedFile::fake()->image('image2.jpg');
         $response2 = $this->postJson("/api/souvenir/{$souvenir2->id}/entry", [
+            'image_path' => $file2,
+            'caption' => 'Deuxième image',
+        ]);
+
+        $response2->assertCreated();
+    }
+
+    public function test_user_can_upload_multiple_entries_if_memoryType_isnt_OnePerDay()
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        $otherMemoryType = MemoryType::firstOrCreate(
+            ['title' => 'Simple album'],
+            ['description' => 'Partagez vos souvenirs librement']
+        );
+
+        $souvenir = Souvenir::factory()->create([
+            'memory_type_id' => $otherMemoryType->id,
+        ]);
+        $souvenir->users()->attach($user->id, ['role' => 'admin']);
+
+        $file1 = UploadedFile::fake()->image('image1.jpg');
+        $response1 = $this->postJson("/api/souvenir/{$souvenir->id}/entry", [
+            'image_path' => $file1,
+            'caption' => 'Première image',
+        ]);
+
+        $response1->assertCreated();
+
+        $file2 = UploadedFile::fake()->image('image2.jpg');
+        $response2 = $this->postJson("/api/souvenir/{$souvenir->id}/entry", [
             'image_path' => $file2,
             'caption' => 'Deuxième image',
         ]);
