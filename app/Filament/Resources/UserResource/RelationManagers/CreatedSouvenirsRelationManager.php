@@ -18,9 +18,17 @@ class CreatedSouvenirsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required()
+                Forms\Components\Select::make('memory_type_id')->relationship('memoryType', 'title')->required(),
+                Forms\Components\TextInput::make('title')->required()
                     ->maxLength(255),
+                Forms\Components\FileUpload::make('cover_image')
+                    ->label('Image de fond')
+                    ->directory('souvenirs/covers')
+                    ->image()
+                    ->preserveFilenames()
+                    ->visibility('public')
+                    ->disk('public'),
+                Forms\Components\TextInput::make('memory_points')->numeric()->required(),
             ]);
     }
 
@@ -28,7 +36,10 @@ class CreatedSouvenirsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('memoryType.title')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('title')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('memory_points')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('created_at')->sortable()->searchable(),
             ])
             ->filters([
                 //
