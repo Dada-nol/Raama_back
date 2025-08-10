@@ -153,6 +153,34 @@ class EntryApiTest extends TestCase
         $response->assertCreated();
     }
 
+    public function test_user_can_upload_multiple_entries_if_different_souvenir()
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        $souvenir1 = Souvenir::factory()->create();
+        $souvenir1->users()->attach($user->id, ['role' => 'admin']);
+
+        $souvenir2 = Souvenir::factory()->create();
+        $souvenir2->users()->attach($user->id, ['role' => 'member']);
+
+        $file1 = UploadedFile::fake()->image('image1.jpg');
+        $response1 = $this->postJson("/api/souvenir/{$souvenir1->id}/entry", [
+            'image_path' => $file1,
+            'caption' => 'Première image',
+        ]);
+
+        $response1->assertCreated();
+
+        $file2 = UploadedFile::fake()->image('image2.jpg');
+        $response2 = $this->postJson("/api/souvenir/{$souvenir2->id}/entry", [
+            'image_path' => $file2,
+            'caption' => 'Deuxième image',
+        ]);
+
+        $response2->assertCreated();
+    }
+
     public function test_user_and_souvenir_get_points_when_creating_entry()
     {
         $user = User::factory()->create();
