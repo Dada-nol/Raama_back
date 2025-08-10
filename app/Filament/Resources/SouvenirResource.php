@@ -23,6 +23,7 @@ class SouvenirResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('user_id')->relationship('creator', 'name')->required(),
                 Forms\Components\Select::make('memory_type_id')->relationship('memoryType', 'title')->required(),
                 Forms\Components\TextInput::make('title')->required()
                     ->maxLength(255),
@@ -36,6 +37,8 @@ class SouvenirResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('memoryType.title')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('creator.name')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('title')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('memory_points')->sortable()->searchable(),
 
@@ -45,6 +48,7 @@ class SouvenirResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

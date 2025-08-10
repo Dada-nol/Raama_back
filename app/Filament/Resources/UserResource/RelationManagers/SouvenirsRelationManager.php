@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\UserResource\RelationManagers;
 
 use App\Models\Souvenir;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Forms;
 use Filament\Tables;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -24,7 +26,7 @@ class SouvenirsRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
-                Tables\Columns\TextColumn::make('pivot.role'),
+                Tables\Columns\TextColumn::make('pivot.role')->label('Role dans le souvenir'),
                 Tables\Columns\TextColumn::make('pivot.joined_at')->label('Joined At'),
             ])
             ->filters([])
@@ -56,8 +58,43 @@ class SouvenirsRelationManager extends RelationManager
                     }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                EditAction::make()
+                    ->label('Modifier')
+                    ->form([
+
+                        Forms\Components\Select::make('role')
+                            ->options([
+                                'admin' => 'Admin',
+                                'member' => 'Member'
+                            ])->nullable()
+                            ->label('Role'),
+
+                        Forms\Components\DateTimePicker::make('joined_at')
+                            ->label('Rejoins le')
+                            ->nullable(),
+                    ])
+                    ->mutateFormDataUsing(function (array $data) {
+                        return [
+                            'pivot.role' => $data['role'] ?? false,
+                            'pivot.joined_at' => $data['joined_at'] ?? null,
+                        ];
+                    })
+                    ->using(function ($record, $data, $livewire) {
+                        $livewire->getOwnerRecord()
+                            ->souvenirs()
+                            ->updateExistingPivot($record->id, [
+                                'role' => $data['pivot.role'],
+                                'joined_at' => $data['pivot.joined_at'],
+                            ]);
+                    }),
+
+                DeleteAction::make()
+                    ->label('Détacher')
+                    ->action(function ($record, $livewire) {
+                        $livewire->getOwnerRecord()
+                            ->souvenirs()
+                            ->detach($record->id);
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
