@@ -1,30 +1,31 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\UserResource\RelationManagers;
 
-use App\Filament\Resources\EntryResource\Pages;
-use App\Filament\Resources\EntryResource\RelationManagers;
-use App\Models\Entry;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class EntryResource extends Resource
+class EntriesRelationManager extends RelationManager
 {
-    protected static ?string $model = Entry::class;
+    protected static string $relationship = 'entries';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('user_id')->relationship('user', 'name')->required(),
-                Forms\Components\Select::make('souvenir_id')->relationship('souvenir', 'title')->required(),
+                Forms\Components\Select::make('souvenir_id')
+                    ->label('Souvenir')
+                    ->options(function () {
+                        return $this->ownerRecord
+                            ->souvenirs()
+                            ->pluck('title', 'souvenirs.id');
+                    })
+                    ->required(),
                 Forms\Components\FileUpload::make('image_path')
                     ->label('Image')
                     ->directory('souvenirs/entries')
@@ -34,11 +35,10 @@ class EntryResource extends Resource
                     ->disk('public'),
                 Forms\Components\TextInput::make('caption')->required()
                     ->maxLength(255),
-
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([
@@ -51,6 +51,9 @@ class EntryResource extends Resource
             ->filters([
                 //
             ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make(),
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
@@ -60,21 +63,5 @@ class EntryResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListEntries::route('/'),
-            'create' => Pages\CreateEntry::route('/create'),
-            'edit' => Pages\EditEntry::route('/{record}/edit'),
-        ];
     }
 }

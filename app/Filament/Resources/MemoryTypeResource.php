@@ -27,6 +27,7 @@ class MemoryTypeResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('description')
                     ->maxLength(255),
+                Forms\Components\Toggle::make('isAvailable')->required(),
             ]);
     }
 
@@ -36,6 +37,7 @@ class MemoryTypeResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('description')->sortable(),
+                Tables\Columns\IconColumn::make('isAvailable')->sortable()->boolean(),
 
             ])
             ->filters([

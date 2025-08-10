@@ -13,7 +13,13 @@ class SouvenirFactory extends Factory
   {
     return [
       'user_id' => User::factory(),
-      'memory_type_id' => 1,
+      'memory_type_id' => MemoryType::firstOrCreate(
+        ['title' => 'One per day'],
+        [
+          'description' => 'Partagez une photo par jour avec vos proches',
+          'isAvailable' => true
+        ]
+      )->id,
       'title' => $this->faker->name(),
     ];
   }
