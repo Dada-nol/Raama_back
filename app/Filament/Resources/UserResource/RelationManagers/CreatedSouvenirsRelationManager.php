@@ -6,6 +6,8 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Tables\Actions\CreateAction;
+
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -45,7 +47,13 @@ class CreatedSouvenirsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+
+                CreateAction::make()
+                    ->after(function ($record, $data) {
+                        // Attacher le user propriétaire (ownerRecord) dans la pivot souvenir_users
+                        $record->users()->attach($this->ownerRecord->id, ['role' => 'admin']);
+                    }),
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

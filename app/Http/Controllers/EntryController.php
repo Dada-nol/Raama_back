@@ -44,15 +44,18 @@ class EntryController extends Controller
             'caption' => 'nullable|string',
         ]);
 
-        $alreadyUploaded = Entry::where('user_id', $user->id)
-            ->where('souvenir_id', $souvenir->id)
-            ->whereDate('created_at', now()->toDateString())
-            ->exists();
+        if ($souvenir->memoryType->title === 'One per day') {
 
-        if ($alreadyUploaded) {
-            return response()->json([
-                'message' => 'Vous avez déjà uploadé une image aujourd\'hui.'
-            ], 403);
+            $alreadyUploaded = Entry::where('user_id', $user->id)
+                ->where('souvenir_id', $souvenir->id)
+                ->whereDate('created_at', now()->toDateString())
+                ->exists();
+
+            if ($alreadyUploaded) {
+                return response()->json([
+                    'message' => 'Vous avez déjà uploadé une image aujourd\'hui.'
+                ], 403);
+            }
         }
 
         $path = $request->file('image_path')->store('souvenirs/entries', 'public');

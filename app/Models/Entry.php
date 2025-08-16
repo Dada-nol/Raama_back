@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class Entry extends Model
 {
@@ -23,7 +24,16 @@ class Entry extends Model
         'caption',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
 
+        static::deleting(function ($entry) {
+            if ($entry->image_path) {
+                Storage::disk('public')->delete($entry->image_path);
+            }
+        });
+    }
     /**
      * @return BelongsTo<User, Entry>
      */

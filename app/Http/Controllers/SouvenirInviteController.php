@@ -8,6 +8,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 
@@ -39,34 +40,50 @@ class SouvenirInviteController extends Controller
             'expires_at' => now()->addDays(7),
         ]);
 
+        $frontendUrl = config('app.frontend_url', 'http://localhost:3000');
+        $inviteLink = $frontendUrl . '/invite/' . $token;
+
         return response()->json([
-            'invite_link' => route('souvenirs.invite.show', ['token' => $token])
+            'invite_link' => $inviteLink
         ], 201);
     }
 
     public function joinFromToken(string $token)
     {
-        $invite = SouvenirInvite::where('token', $token)->firstOrFail();
+        Log::info("joinFromToken called with token: $token");
+
+        $invite = SouvenirInvite::where('token', $token)->first();
+
+        if (!$invite) {
+            Log::warning("Invite not found for token: $token");
+            abort(404);
+        }
 
         if ($invite->expires_at && now()->gt($invite->expires_at)) {
+            Log::warning("Invite expired for token: $token");
             abort(410);
         }
 
         $souvenir = $invite->souvenir;
+        Log::info("Found souvenir ID: {$souvenir->id}");
 
         $user = Auth::user();
+        Log::info("User from Auth: " . ($user ? $user->id : 'null'));
 
         if (!$user) {
-            // Stocker le token en session avant redirection login
-            session(['pending_invite_token' => $token]);
-            return redirect()->route('login');
+            Log::info("User not logged in, redirecting to login");
+            return response()->json(401);
         }
 
-        // Ajouter le user comme membre s’il ne l’est pas déjà
         if (!$souvenir->users->contains($user->id)) {
             $souvenir->users()->attach($user->id);
+            Log::info("User attached to souvenir");
+        } else {
+            Log::info("User already member of souvenir");
         }
 
-        return redirect()->route('souvenir.show', $souvenir->id);
+        return response()->json([
+            'souvenir_id' => $souvenir->id
+        ]);
     }
 }

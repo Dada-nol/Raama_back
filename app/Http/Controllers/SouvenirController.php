@@ -6,6 +6,7 @@ use App\Models\MemoryType;
 use App\Models\Souvenir;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SouvenirController extends Controller
 {
@@ -107,6 +108,7 @@ class SouvenirController extends Controller
         }
 
         $souvenir->update($validated);
+        $souvenir->refresh();
 
         return response()->json([
             'id' => $souvenir->id,

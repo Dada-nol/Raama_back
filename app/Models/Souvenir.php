@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class Souvenir extends Model
 {
@@ -24,6 +25,26 @@ class Souvenir extends Model
         'cover_image',
         'memory_points',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($souvenir) {
+            // Supprimer l'image de couverture du souvenir
+            if ($souvenir->cover_image) {
+                Storage::disk('public')->delete($souvenir->cover_image);
+            }
+
+            // Supprimer toutes les entries liées et leurs images
+            foreach ($souvenir->entries as $entry) {
+                if ($entry->image_path) {
+                    Storage::disk('public')->delete($entry->image_path);
+                }
+                $entry->delete();
+            }
+        });
+    }
 
     /**
      * @return BelongsToMany<User, Souvenir>
