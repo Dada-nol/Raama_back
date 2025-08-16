@@ -71,7 +71,6 @@ class SouvenirInviteController extends Controller
         Log::info("User from Auth: " . ($user ? $user->id : 'null'));
 
         if (!$user) {
-            session(['pending_invite_token' => $token]);
             Log::info("User not logged in, redirecting to login");
             return response()->json(['message' => 'Unauthorized'], 401);
         }

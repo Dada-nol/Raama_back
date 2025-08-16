@@ -35,7 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('/souvenir/{id}/entry', [EntryController::class, 'index']);
 });
 
-Route::middleware(['auth:sanctum', JoinSouvenirIfPending::class])->get('/recent', [SouvenirController::class, 'recent']);
+Route::middleware(['auth:sanctum'])->get('/recent', [SouvenirController::class, 'recent']);
 
 Route::middleware('auth:sanctum')->post('/souvenirs/{souvenir}/invite', [SouvenirInviteController::class, 'generateInvite']);
 Route::middleware('auth:sanctum')->get('/invite/{token}', [SouvenirInviteController::class, 'joinFromToken'])->name('souvenirs.invite.show');

@@ -54,8 +54,7 @@ class SouvenirInviteTest extends TestCase
     $invite = SouvenirInvite::factory()->for($souvenir)->create();
 
     $response = $this->getJson("/api/invite/{$invite->token}");
-    $response->assertStatus(302);
-    $response->assertRedirect(route('souvenir.show', $souvenir->id));
+    $response->assertStatus(200);
     $this->assertTrue($souvenir->users()->where('user_id', $user->id)->exists());
   }
 
@@ -83,14 +82,11 @@ class SouvenirInviteTest extends TestCase
     $souvenir = Souvenir::factory()->create();
     $invite = SouvenirInvite::factory()->for($souvenir)->create();
 
-    $response = $this->get("/api/invite/{$invite->token}");
+    $response = $this->getJson("/api/invite/{$invite->token}");
 
-    $response->assertRedirect(route('login'));
+    $response->assertStatus(401);
 
-    $this->assertEquals(
-      $invite->token,
-      session('pending_invite_token')
-    );
+    $response->assertSessionHas('pending_invite_token', $invite->token);
   }
 
   /** @test */
