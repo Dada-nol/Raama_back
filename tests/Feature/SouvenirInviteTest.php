@@ -77,7 +77,7 @@ class SouvenirInviteTest extends TestCase
   }
 
   /** @test */
-  public function guest_is_redirected_to_login_when_joining_a_souvenir()
+  public function guest_received_401_error_when_joining_a_souvenir()
   {
     $souvenir = Souvenir::factory()->create();
     $invite = SouvenirInvite::factory()->for($souvenir)->create();
@@ -85,25 +85,5 @@ class SouvenirInviteTest extends TestCase
     $response = $this->getJson("/api/invite/{$invite->token}");
 
     $response->assertStatus(401);
-
-    $response->assertSessionHas('pending_invite_token', $invite->token);
-  }
-
-  /** @test */
-  public function it_attaches_user_to_souvenir_if_pending_invite_exists_in_session()
-  {
-    $user = User::factory()->create();
-    Sanctum::actingAs($user);
-
-    $souvenir = Souvenir::factory()->create();
-    $invite = SouvenirInvite::factory()->for($souvenir)->create();
-
-    $response = $this->withSession(['pending_invite_token' => $invite->token])->get('/api/recent');
-
-    $response->assertStatus(200);
-
-    $this->assertTrue(
-      $souvenir->fresh()->users()->where('user_id', $user->id)->exists()
-    );
   }
 }

@@ -72,7 +72,7 @@ class SouvenirInviteController extends Controller
 
         if (!$user) {
             Log::info("User not logged in, redirecting to login");
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(401);
         }
 
         if (!$souvenir->users->contains($user->id)) {
