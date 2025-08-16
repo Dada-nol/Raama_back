@@ -54,6 +54,7 @@ class SouvenirInviteTest extends TestCase
     $invite = SouvenirInvite::factory()->for($souvenir)->create();
 
     $response = $this->getJson("/api/invite/{$invite->token}");
+
     $response->assertStatus(200);
     $this->assertTrue($souvenir->users()->where('user_id', $user->id)->exists());
   }
