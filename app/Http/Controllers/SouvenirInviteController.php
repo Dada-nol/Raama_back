@@ -29,8 +29,6 @@ class SouvenirInviteController extends Controller
         if ($role !== "admin") {
             return response()->json(['message' => 'Vous n\'avez pas les permissions nécessaire pour faire cela'], 403);
         }
-        // Autoriser uniquement le créateur ou un membre à inviter
-        // $this->authorize('invite', $souvenir);
 
         $token = Str::uuid();
 

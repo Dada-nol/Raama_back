@@ -9,8 +9,6 @@ use App\Http\Controllers\MemoryTypeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SouvenirController;
 use App\Http\Controllers\SouvenirInviteController;
-use App\Http\Middleware\JoinSouvenirIfPending;
-use App\Models\MemoryType;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [UserController::class, "register"])->name('register');
