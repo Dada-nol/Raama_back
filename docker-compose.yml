@@ -1,0 +1,30 @@
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: raama
+        ports:
+            - "8000:8000"
+        volumes:
+            - .:/var/www/html
+            - ./vendor:/var/www/html/vendor
+        depends_on:
+            - db
+        env_file:
+            - .env
+
+    db:
+        image: mysql:8.0
+        container_name: raama_db
+        restart: always
+        ports:
+            - "3307:3306"
+        environment:
+            MYSQL_DATABASE: Raama
+            MYSQL_ROOT_PASSWORD: T0BeaHer0!
+        volumes:
+            - dbdata:/var/lib/mysql
+
+volumes:
+    dbdata:
