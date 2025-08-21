@@ -4,18 +4,26 @@ FROM php:8.2-cli
 # Définir le dossier de travail
 WORKDIR /var/www/html
 
-# Installer les dépendances système et PHP requises
+# Installer extensions PHP requises
 RUN apt-get update && apt-get install -y \
-    libzip-dev unzip git curl \
-    && docker-php-ext-install pdo_mysql zip
+    libicu-dev \
+    libzip-dev \
+    git \
+    unzip \
+    && docker-php-ext-install intl pdo_mysql zip \
+    && docker-php-ext-enable intl zip \
+    && rm -rf /var/lib/apt/lists/*
 
 # Installer Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# 5Copier le code dans le container
+# Copier le code dans le container
 COPY . .
 
-#  Installer les dépendances PHP
+# Corriger le warning Git
+RUN git config --global --add safe.directory /var/www/html
+
+# Installer les dépendances PHP
 RUN composer install --no-dev --optimize-autoloader
 
 # Exposer le port pour php artisan serve

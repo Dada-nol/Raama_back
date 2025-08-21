@@ -1,0 +1,14 @@
+
+# Node / Front
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Laravel cache & vendor (on les reconstruit dans le conteneur)
+vendor
+bootstrap/cache/*.php
+storage/*.key
+
+# Git
+.git
+.gitignore
