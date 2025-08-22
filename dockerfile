@@ -36,6 +36,11 @@ RUN npm install
 # Compiler les assets
 RUN npm run build
 
+# Permissions correctes pour Laravel
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html \
+    && chmod -R 775 storage bootstrap/cache
+
 # Exposer le port pour php artisan serve
 EXPOSE 8000
 
