@@ -26,13 +26,11 @@ RUN git config --global --add safe.directory /var/www/html
 # Installer les dépendances PHP
 RUN composer install --no-dev --optimize-autoloader
 
+# Vider le cacher
+RUN php artisan config:clear && php artisan cache:clear && php artisan view:cache
+
 # Optimiser Filament
 RUN php artisan filament:optimize
-
-# Publier configs, traductions et assets de Filament
-RUN php artisan vendor:publish --tag=filament-config --force \
-    && php artisan vendor:publish --tag=filament-translations --force \
-    && php artisan vendor:publish --tag=filament-assets --force
 
 # Exposer le port pour php artisan serve
 EXPOSE 8000
