@@ -20,6 +20,12 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Copier le code dans le container
 COPY . .
 
+# Corriger le warning Git
+RUN git config --global --add safe.directory /var/www/html
+
+# Installer les dépendances PHP
+RUN composer install --no-dev --optimize-autoloader
+
 # Installer Node et npm
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs
@@ -29,12 +35,6 @@ RUN npm install
 
 # Compiler les assets
 RUN npm run build
-
-# Corriger le warning Git
-RUN git config --global --add safe.directory /var/www/html
-
-# Installer les dépendances PHP
-RUN composer install --no-dev --optimize-autoloader
 
 # Exposer le port pour php artisan serve
 EXPOSE 8000
