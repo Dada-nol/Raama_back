@@ -26,20 +26,13 @@ RUN git config --global --add safe.directory /var/www/html
 # Installer les dépendances PHP
 RUN composer install --no-dev --optimize-autoloader
 
-# Installer Node et npm
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs
+# Optimiser Filament
+RUN php artisan filament:optimize
 
-# Installer les dépendances JS
-RUN npm install
-
-# Compiler les assets
-RUN npm run build
-
-# Permissions correctes pour Laravel
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html \
-    && chmod -R 775 storage bootstrap/cache
+# Publier configs, traductions et assets de Filament
+RUN php artisan vendor:publish --tag=filament-config --force \
+    && php artisan vendor:publish --tag=filament-translations --force \
+    && php artisan vendor:publish --tag=filament-assets --force
 
 # Exposer le port pour php artisan serve
 EXPOSE 8000
