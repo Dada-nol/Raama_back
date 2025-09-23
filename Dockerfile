@@ -26,6 +26,11 @@ RUN git config --global --add safe.directory /var/www/html
 # Installer les dépendances PHP
 RUN composer install --no-dev --optimize-autoloader
 
+RUN php artisan config:clear \
+    && php artisan route:clear \
+    && php artisan view:clear \
+    && php artisan filament:assets
+
 # Exposer le port pour php artisan serve
 ENV PORT=8080
 EXPOSE 8080
