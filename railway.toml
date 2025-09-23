@@ -4,13 +4,11 @@ builder = "railpack"
 [variables]
 PORT = "8080"
 
-[phases.setup]
-nixPkgs = [
-  "php82",
-  "php82Extensions.intl",
-  "php82Extensions.zip",
-  "nodejs_22"
-]
+[packages]
+php = "8.2"
+php-intl = "*"
+php-zip = "*"
+nodejs = "22"
 
 [phases.install]
 commands = [
